@@ -24,103 +24,12 @@ function preload() {
 	// game.load.spritesheet('freeze', 'imgs/freeze.png', 82, 83);
 
 }
-/*
-Object.prototype.Clone = function()
- {
-    var objClone;
-    if ( this.constructor == Object ) objClone = new this.constructor(); 
-    else objClone = new this.constructor(this.valueOf()); 
-    for ( var key in this )
-    {
-        if ( objClone[key] != this[key] )
-        { 
-            if ( typeof(this[key]) == 'object' )
-            { 
-                objClone[key] = this[key].Clone();
-            }
-            else
-            {
-                objClone[key] = this[key];
-            }
-        }
-    }
-    objClone.toString = this.toString;
-    objClone.valueOf = this.valueOf;
-    return objClone; 
- }    
 
- */
-
-
-// function fire()
-// {
-// 	var fire = game.add.sprite(200, 200, 'fire');
-// 	fire.animations.add("run",[0,1,2,3,4,5],15,true);
-// 	fire.animations.play("run");
-// }
-// function freeze()
-// {
-// 	var fire = game.add.sprite(200, 400, 'freeze');
-// 	fire.animations.add("run",[0,1,2,3,4,5],15,true);
-// 	fire.animations.play("run");
-// }
 var testinfo='start';
 var test=new Object();
 	test.a=0;
 	test.b=0;
 	test.c=0;
-
-
-
-
-
-var accessArray = new Array();
-{
-	for(var i=0;i<20;i++)
-	{
-		accessArray[i]=new Array();
-		for(var ii=i;ii<20;ii++)
-		{
-			// accessArray[i][ii]=new Object();
-			// accessArray[i][ii].typ=0;// typ 0 cannot access, 1 can access directly, 2 access through big area;
-			// accessArray[i][ii].mid=-1;// mid area for access through
-			accessArray[i][ii]=-2;//-2 cannot access. -1 access directly. else is the area# access through.
-		}
-	}
-	// same board access
-	for(var i=0;i<20;i+=10)
-	{
-		accessArray[0+i][6+i]=-1;
-		accessArray[1+i][7+i]=-1;
-		accessArray[2+i][8+i]=-1;
-		accessArray[3+i][7+i]=-1;
-		accessArray[3+i][8+i]=-1;
-		accessArray[4+i][6+i]=-1;
-		accessArray[4+i][7+i]=-1;
-		accessArray[5+i][6+i]=-1;
-		accessArray[5+i][8+i]=-1;
-		accessArray[6+i][9+i]=-1;// center tomb move to tail area
-		accessArray[6+i][7+i]=4+i;
-		accessArray[6+i][8+i]=5+i;
-		accessArray[7+i][8+i]=3+i;
-	}
-	//access between boards
-	accessArray[3][13]=-1;
-	accessArray[7][18]=-1;
-	accessArray[8][17]=-1;
-}
-function access(x,y)
-{
-	if(x>y)
-	{
-		var z=y;
-		y=x;
-		x=z;
-	}
-	return accessArray[x][y];
-}
-
-
 var initFinished =false;
 var clickStat =0;
 var score=new Array();
@@ -133,28 +42,6 @@ var scoreA;
 var scoreAb;
 var scoreZ;
 var scoreZb;
-function scoreCheck()
-{
-	score[0]=0;
-	score[1]=0;
-	for(var i=0;i<6;i++)
-	{
-		if(MP[i].cont[1].chessid!=-1 && MP[i].own!=chess[MP[i].cont[1].chessid].own)
-			score[chess[MP[i].cont[1].chessid].own]++;
-		if(MP[i+10].cont[1].chessid!=-1 && MP[i+10].own!=chess[MP[i+10].cont[1].chessid].own)
-			score[chess[MP[i+10].cont[1].chessid].own]++;
-	}
-	if(score[0]>=3 || score[1]>=3)
-	{
-		if(score[0]==score[1])
-			return player.o();
-		else if(score[0]>score[1])
-			return 0;
-		else if(score[0]<score[1])
-			return 1;
-	}
-	return -1;
-}
 var player = new Object();
 	player.p=0;// playing
 	player.r=0;// played rounds
@@ -310,6 +197,77 @@ var Chess =
 		return tempChess;
 	}
 };
+
+var accessArray = new Array();
+{
+	for(var i=0;i<20;i++)
+	{
+		accessArray[i]=new Array();
+		for(var ii=i;ii<20;ii++)
+		{
+			// accessArray[i][ii]=new Object();
+			// accessArray[i][ii].typ=0;// typ 0 cannot access, 1 can access directly, 2 access through big area;
+			// accessArray[i][ii].mid=-1;// mid area for access through
+			accessArray[i][ii]=-2;//-2 cannot access. -1 access directly. else is the area# access through.
+		}
+	}
+	// same board access
+	for(var i=0;i<20;i+=10)
+	{
+		accessArray[0+i][6+i]=-1;
+		accessArray[1+i][7+i]=-1;
+		accessArray[2+i][8+i]=-1;
+		accessArray[3+i][7+i]=-1;
+		accessArray[3+i][8+i]=-1;
+		accessArray[4+i][6+i]=-1;
+		accessArray[4+i][7+i]=-1;
+		accessArray[5+i][6+i]=-1;
+		accessArray[5+i][8+i]=-1;
+		accessArray[6+i][9+i]=-1;// center tomb move to tail area
+		accessArray[6+i][7+i]=4+i;
+		accessArray[6+i][8+i]=5+i;
+		accessArray[7+i][8+i]=3+i;
+	}
+	//access between boards
+	accessArray[3][13]=-1;
+	accessArray[7][18]=-1;
+	accessArray[8][17]=-1;
+}
+
+function access(x,y)
+{
+	if(x>y)
+	{
+		var z=y;
+		y=x;
+		x=z;
+	}
+	return accessArray[x][y];
+}
+
+
+function scoreCheck()
+{
+	score[0]=0;
+	score[1]=0;
+	for(var i=0;i<6;i++)
+	{
+		if(MP[i].cont[1].chessid!=-1 && MP[i].own!=chess[MP[i].cont[1].chessid].own)
+			score[chess[MP[i].cont[1].chessid].own]++;
+		if(MP[i+10].cont[1].chessid!=-1 && MP[i+10].own!=chess[MP[i+10].cont[1].chessid].own)
+			score[chess[MP[i+10].cont[1].chessid].own]++;
+	}
+	if(score[0]>=3 || score[1]>=3)
+	{
+		if(score[0]==score[1])
+			return player.o();
+		else if(score[0]>score[1])
+			return 0;
+		else if(score[0]<score[1])
+			return 1;
+	}
+	return -1;
+}
 
 function areaLevel(areaid)// the # of the domain chesses; 
 { 

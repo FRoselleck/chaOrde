@@ -24,11 +24,29 @@ BasicGame.Preloader.prototype = {
 
 		//	Here we load the rest of the assets our game needs.
 		//	As this is just a Project Template I've not provided these assets, the lines below won't work as the files themselves will 404, they are just an example of use.
-		this.load.image('titlepage', 'images/title.jpg');
-		this.load.atlas('playButton', 'images/play_button.png', 'images/play_button.json');
-		this.load.audio('titleMusic', ['audio/main_menu.mp3']);
-		this.load.bitmapFont('caslon', 'fonts/caslon.png', 'fonts/caslon.xml');
+		this.load.image('titlepage', 'images/Title.png');
+		this.load.image('playButton', 'images/Play.png');
+		// this.load.atlas('playButton', 'images/play_button.png', 'images/play_button.json');
+		this.load.audio('titleMusic', ['audio/outgamemusic.mp3']);
+		// this.load.bitmapFont('caslon', 'fonts/caslon.png', 'fonts/caslon.xml');
 		//	+ lots of other required assets here
+		
+		this.load.image('board', 'images/board.png');
+		this.load.image('ZL', 'images/ZL.png');
+		this.load.image('AL', 'images/AL.png');
+		this.load.image('ZS', 'images/ZS.png');
+		this.load.image('AS', 'images/AS.png');
+		this.load.image('balance', 'images/balance.png');
+		this.load.image('order', 'images/order.png');
+		this.load.image('chaos', 'images/chaos.png');
+		this.load.image('s0', 'images/0.png');
+		this.load.image('s1', 'images/1.png');
+		this.load.image('s2', 'images/2.png');
+		this.load.image('s3', 'images/3.png');
+		this.load.image('s4', 'images/4.png');
+		this.load.image('s5', 'images/5.png');
+		this.load.image('s6', 'images/6.png');
+		this.load.spritesheet('winInfo', 'images/winInfo.png', 450, 170);
 
 	},
 

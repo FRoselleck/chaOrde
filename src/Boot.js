@@ -24,7 +24,7 @@ BasicGame.Boot.prototype = {
         if (this.game.device.desktop)
         {
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            this.scale.setMinMax(480, 260, 1024, 768);
+            this.scale.setMinMax(568,320,2272,1280);
             this.scale.pageAlignHorizontally = true;
             this.scale.pageAlignVertically = true;
             this.scale.setScreenSize(true);
@@ -33,7 +33,7 @@ BasicGame.Boot.prototype = {
         else
         {
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            this.scale.setMinMax(480, 260, 1024, 768);
+            this.scale.setMinMax(320, 568, 1280,2272);
             this.scale.pageAlignHorizontally = true;
             this.scale.pageAlignVertically = true;
             this.scale.forceOrientation(true, false);
@@ -49,8 +49,8 @@ BasicGame.Boot.prototype = {
     preload: function () {
 
         //  Here we load the assets required for our preloader (in this case a background and a loading bar)
-        this.load.image('preloaderBackground', 'images/preloader_background.jpg');
-        this.load.image('preloaderBar', 'images/preloadr_bar.png');
+        this.load.image('preloaderBackground', 'images/Backgroud.png');
+        this.load.image('preloaderBar', 'images/Title.png');
 
     },
 
