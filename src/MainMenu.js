@@ -52,17 +52,17 @@ BasicGame.MainMenu.prototype = {
 		this.add.sprite(0, 0, 'preloaderBackground');
 		
 
-		this.button_B=this.add.sprite(this.world.width/2,this.world.height*0.42, 'board_B');
+		this.button_B=this.add.sprite(this.world.width/2,this.world.height*0.3, 'board_B');
 		this.button_B.anchor.set(0.5,2/3);
-		this.button_B.scale.set(0.6);
+		this.button_B.scale.set(0.8);
 		this.button_B.angle=180;
-		this.playButton = this.add.button(this.world.width/2, this.world.height*0.75, 'AZL', this.startGame, this, 'buttonOver', 'buttonOut', 'buttonOver');
-		this.playButton.anchor.set(0.5,0.5);
+		this.playButton = this.add.button(this.world.width/2, this.world.height*0.795, 'AZL', this.startGame, this, 'buttonOver', 'buttonOut', 'buttonOver');
+		this.playButton.anchor.set(0.5,2/3);
 
         // this.physics.arcade.enable(this.playButton);
 
 
-		this.titlepage=this.add.sprite(this.world.width/2, this.world.height*0.3, 'titlepage');
+		this.titlepage=this.add.sprite(this.world.width/2-4, this.world.height*0.3, 'titlepage');
 		this.titlepage.anchor.set(0.5,0.5);
 	},
 

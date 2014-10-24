@@ -36,7 +36,7 @@ BasicGame.Boot.prototype = {
             this.scale.setMinMax(320, 568, 1280,2272);
             this.scale.pageAlignHorizontally = true;
             this.scale.pageAlignVertically = true;
-            this.scale.forceOrientation(true, false);
+            this.scale.forceOrientation(false, true);
             this.scale.setResizeCallback(this.gameResized, this);
             this.scale.enterIncorrectOrientation.add(this.enterIncorrectOrientation, this);
             this.scale.leaveIncorrectOrientation.add(this.leaveIncorrectOrientation, this);

@@ -41,6 +41,7 @@ BasicGame.Game = function (game) {
     this.player;
     this.selectedChess;
     this.selectedArea;
+    this.startpoint;
 
     this.chess= new Array();
 
@@ -175,7 +176,7 @@ BasicGame.Game.prototype =
                     break;
             }
             // var tempChess= game.add.sprite(CP.x+MP[ii][i%6].x,CP.y+MP[ii][i%6].y,texture);
-            var tempChess= this.add.sprite(this.CP.x,this.CP.y,texture);
+            var tempChess= this.add.sprite(this.startpoint.x,this.startpoint.y,texture);
 
             tempChess.anchor.setTo(0.5, 2/3);
 
@@ -652,6 +653,7 @@ BasicGame.Game.prototype =
     {
         testinfo='clicked';
         // this.clickStat=0;
+        // console.log(this);
         switch(this.clickStat)
         {
         case 0:
@@ -669,7 +671,7 @@ BasicGame.Game.prototype =
                     this.clickStat=1;
                     this.chess[i].body.angularVelocity=500;
                     this.testinfo+=this.selectedChess;
-                    this.testinfo+='.own='+this.chess[selectedChess].own;
+                    this.testinfo+='.own='+this.chess[this.selectedChess].own;
                 }
                 // chess[i].input.pixelPerfectClick=false;
             }
@@ -692,7 +694,7 @@ BasicGame.Game.prototype =
 
             }
             if (selectedDistance<50)// in the board.
-                if(this.move(selectedChess,selectedArea))
+                if(this.move(this.selectedChess,this.selectedArea))
                 {
                     this.revive();
                     this.playerchange();  // switch players
@@ -738,6 +740,12 @@ BasicGame.Game.prototype =
         ///////////////////////////Globe init//////////////////////////////////////////////
         this.gameWidth=640;
         this.gameHeight=1136;
+
+        this.startpoint= new Object();
+
+        this.startpoint.x=this.world.width/2;
+
+        this.startpoint.y=this.world.height*0.782;
         // this.stage.backgroundColor=0xFFFFFF;
         this.testinfo='start';
         this.test=new Object();
@@ -872,8 +880,13 @@ BasicGame.Game.prototype =
         this.boardChange(3,3);
         this.scoreCheck();
 
+        this.backButton = this.add.button(this.world.width*0.84, this.world.height*0.1, 'AZL', this.quitGame, this, 'buttonOver', 'buttonOut', 'buttonOver');
+        this.backButton.anchor.set(0.5,2/3);
+        this.backButton.angle=60;
+
         this.initFinished=true;
-        this.input.onTap.add(this.clickEvent);
+        this.input.onTap.add(this.clickEvent,this);
+        //this.clickEvent();
 
         // this.test=this.add.text(100,100,this.MP[2].x+"  "+this.MP[2].y,0x000000);
 
@@ -922,6 +935,7 @@ BasicGame.Game.prototype =
     render: function()
     {
         this.test.text=this.clickStat;//this.testinfo;
+        // console.log(this);
         if(this.scoreA.frameName!=('images/'+this.score[0]+'.png'))
         {
             this.scoreA.loadTexture('s'+this.score[0]);
