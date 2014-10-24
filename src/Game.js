@@ -21,37 +21,47 @@ BasicGame.Game = function (game) {
 
     //	You can use any of these from any function within this State.
     //	But do consider them as being 'reserved words', i.e. don't create a property for your own game called "world" or you'll over-write the world reference.
-    this.gameWidth=640;
-    this.gameHeight=1136;
+    this.music = null;
+
+    this.gameWidth;
+    this.gameHeight;
     // this.stage.backgroundColor=0xFFFFFF;
-    this.testinfo='start';
-    this.test=new Object();
-        this.test.a=0;
-        this.test.b=0;
-        this.test.c=0;
-    this.initFinished =false;
-    this.clickStat =0;
-    this.score=new Array();
-        this.score[0]=0;
-        this.score[1]=0;
+    this.testinfo;
+    this.test;
+    this.initFinished;
+    this.clickStat=0;
+    this.score;
     this.winInfo;
-    this.gameNotOver=true;
+    this.gameNotOver;
     this.tween;
     this.scoreA;
     this.scoreAb;
     this.scoreZ;
     this.scoreZb;
-    this.player = new Object();
-        this.player.p=0;// playing
-        this.player.r=0;// played rounds
-        this.player.o =function()// opposite
+    this.player;
+    this.selectedChess;
+    this.selectedArea;
+
+    this.chess= new Array();
+
+    this.CP;//center postion caculated from
+    this.DiBoard;//diameter of  board
+    this.DiBattle;//diameter of battle area
+    this.DiTomb;
+    this.MP;//Map Point Position
+    this.accessArray;
+};
+
+BasicGame.Game.prototype =
+{
+        playero :function()// opposite
         {
             return this.player.p===0? 1:0;
-        };
-        this.player.change =function()
+        },
+        playerchange :function()
         {
             this.player.r++;
-            this.player.p=this.player.o();
+            this.player.p=this.playero();
             for(var i=0;i<12;i++)
                 if(this.chess[i].own===this.player.p)
                     this.chess[i].health++;
@@ -70,31 +80,26 @@ BasicGame.Game = function (game) {
                     this.tween = this.add.tween(this.winInfo.scale).to( { x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
             }
 
-        };
-    this.selectedChess=-1;
-    this.selectedArea=-1;
+        },
 
-    this.chess = new Array();
 
-    this.CP = new Object();//center postion caculated from
 
-        this.CP.xxx = this.gameWidth/2;
-        this.CP.yyy = this.gameHeight/2;
 
-    this.DiBoard = 263;//diameter of  board
-    this.DiBattle =90;//diameter of battle area
-    this.DiTomb =60;
-    this.AR =
-    {
-        createNew: function(type,own,xx,yy,agl)
+
+
+
+        createNewMap: function(type,own,x,y,agl)
         {
             var area = new Object();
+            var CP = new Object();//center postion caculated from
+            CP.x = this.gameWidth/2;
+            CP.y = this.gameHeight/2;
             area.typ=type;//0 battle, 1 big, 2 small, 3 core, 4  -1 null
             area.own=own;//0 ordre, 1 chaos , also use by domained by for battle area. -1 unused;
             area.cap= (type===0||type===4)? 4:1 ; //capbility
             area.hold=0;// hold #
-            area.x=this.CP.xxx+xx;// delta x
-            area.y=this.CP.yyy+yy;// delta y
+            area.x=CP.x+x;// delta x
+            area.y=CP.y+y;// delta y
             area.agl=agl;// content angle
             area.cont= new Array();//content
             for (var i = 1; i <=4; i++) // cannot use index 0
@@ -107,54 +112,50 @@ BasicGame.Game = function (game) {
             // area.cont[5]= game.add.sprite(area.x,area.y,'AL');
             return area;
         },
-    };
-
-    this.MP = new Array();//Map Point Position
-    {
-
-        this.MP[0] = new this.AR.createNew(2,     0,  0,      295,    180);
-        this.MP[1] = new this.AR.createNew(2,     0,  -103,   117,    180);
-        this.MP[2] = new this.AR.createNew(2,     0,  103,    117,    180);
-        this.MP[3] = new this.AR.createNew(3,     0,  0,      57,     0);
-        this.MP[4] = new this.AR.createNew(1,     0,  -103,   236,    0);
-        this.MP[5] = new this.AR.createNew(1,     0,  103,    236,    0);
-        this.MP[6] = new this.AR.createNew(0,     0,  0,      355,    180);
-        this.MP[7] = new this.AR.createNew(0,     0,  -155,   87,     180);
-        this.MP[8] = new this.AR.createNew(0,     0,  155,    87,     180);
-        this.MP[9] = new this.AR.createNew(-1,    0,  0,      176,    0);
-        for(var i=10;i<20;i++)
-            this.MP[i]= new this.AR.createNew(this.MP[i-10].typ,1,(this.MP[i-10].x-CP.x)*-1,(this.MP[i-10].y-CP.y)*-1,(this.MP[i-10].agl===0? 180:0));
-        for(var i=6;i<9;i++)
+        initMap: function()
         {
-            this.MP[i].cont[2].y+=this.DiBattle;
-            this.MP[i].cont[3].x-=this.DiBattle*0.866;
-            this.MP[i].cont[3].y-=this.DiBattle*0.5;
-            this.MP[i].cont[4].x+=this.DiBattle*0.866;
-            this.MP[i].cont[4].y-=this.DiBattle*0.5;
-        }
-        for(var i=16;i<19;i++)
-        {
-            this.MP[i].cont[2].y-=this.DiBattle;
-            this.MP[i].cont[3].x-=this.DiBattle*0.866;
-            this.MP[i].cont[3].y+=this.DiBattle*0.5;
-            this.MP[i].cont[4].x+=this.DiBattle*0.866;
-            this.MP[i].cont[4].y+=this.DiBattle*0.5;
-        }
-            this.MP[9].cont[2].y+=this.DiTomb;
-            this.MP[9].cont[3].x-=this.DiTomb*0.866;
-            this.MP[9].cont[3].y-=this.DiTomb*0.5;
-            this.MP[9].cont[4].x+=this.DiTomb*0.866;
-            this.MP[9].cont[4].y-=this.DiTomb*0.5;
-            this.MP[19].cont[2].y-=this.DiTomb;
-            this.MP[19].cont[3].x-=this.DiTomb*0.866;
-            this.MP[19].cont[3].y+=this.DiTomb*0.5;
-            this.MP[19].cont[4].x+=this.DiTomb*0.866;
-            this.MP[19].cont[4].y+=this.DiTomb*0.5;
-    }
 
-    this.Chess =
-    {
-        createNew: function(i)
+            this.MP[0] = this.createNewMap(2,     0,  0,      295,    180);
+            this.MP[1] = this.createNewMap(2,     0,  -103,   117,    180);
+            this.MP[2] = this.createNewMap(2,     0,  103,    117,    180);
+            this.MP[3] = this.createNewMap(3,     0,  0,      57,     0);
+            this.MP[4] = this.createNewMap(1,     0,  -103,   236,    0);
+            this.MP[5] = this.createNewMap(1,     0,  103,    236,    0);
+            this.MP[6] = this.createNewMap(0,     0,  0,      355,    180);
+            this.MP[7] = this.createNewMap(0,     0,  -155,   87,     180);
+            this.MP[8] = this.createNewMap(0,     0,  155,    87,     180);
+            this.MP[9] = this.createNewMap(-1,    0,  0,      176,    0);
+            for(var i=10;i<20;i++)
+                this.MP[i]= this.createNewMap(this.MP[i-10].typ,1,(this.MP[i-10].x-this.CP.x)*-1,(this.MP[i-10].y-this.CP.y)*-1,(this.MP[i-10].agl===0? 180:0));
+            for(var i=6;i<9;i++)
+            {
+                this.MP[i].cont[2].y+=this.DiBattle;
+                this.MP[i].cont[3].x-=this.DiBattle*0.866;
+                this.MP[i].cont[3].y-=this.DiBattle*0.5;
+                this.MP[i].cont[4].x+=this.DiBattle*0.866;
+                this.MP[i].cont[4].y-=this.DiBattle*0.5;
+            }
+            for(var i=16;i<19;i++)
+            {
+                this.MP[i].cont[2].y-=this.DiBattle;
+                this.MP[i].cont[3].x-=this.DiBattle*0.866;
+                this.MP[i].cont[3].y+=this.DiBattle*0.5;
+                this.MP[i].cont[4].x+=this.DiBattle*0.866;
+                this.MP[i].cont[4].y+=this.DiBattle*0.5;
+            }
+                this.MP[9].cont[2].y+=this.DiTomb;
+                this.MP[9].cont[3].x-=this.DiTomb*0.866;
+                this.MP[9].cont[3].y-=this.DiTomb*0.5;
+                this.MP[9].cont[4].x+=this.DiTomb*0.866;
+                this.MP[9].cont[4].y-=this.DiTomb*0.5;
+                this.MP[19].cont[2].y-=this.DiTomb;
+                this.MP[19].cont[3].x-=this.DiTomb*0.866;
+                this.MP[19].cont[3].y+=this.DiTomb*0.5;
+                this.MP[19].cont[4].x+=this.DiTomb*0.866;
+                this.MP[19].cont[4].y+=this.DiTomb*0.5;
+        },
+
+        createNewChess: function(i)
         {
             var texture;
             var type =Math.floor(i/3);
@@ -174,7 +175,7 @@ BasicGame.Game = function (game) {
                     break;
             }
             // var tempChess= game.add.sprite(CP.x+MP[ii][i%6].x,CP.y+MP[ii][i%6].y,texture);
-            var tempChess= this.add.sprite(CP.x,CP.y,   texture);
+            var tempChess= this.add.sprite(this.CP.x,this.CP.y,texture);
 
             tempChess.anchor.setTo(0.5, 2/3);
 
@@ -196,58 +197,6 @@ BasicGame.Game = function (game) {
             tempChess.belong2= 0;// the content position of area
             return tempChess;
         },
-    };
-
-    this.accessArray = new Array();
-    {
-        for(var i=0;i<20;i++)
-        {
-            this.accessArray[i]=new Array();
-            for(var ii=i;ii<20;ii++)
-            {
-                // this.accessArray[i][ii]=new Object();
-                // this.accessArray[i][ii].typ=0;// typ 0 cannot access, 1 can access directly, 2 access through big area;
-                // this.accessArray[i][ii].mid=-1;// mid area for access through
-                this.accessArray[i][ii]=-2;//-2 cannot access. -1 access directly. else is the area# access through.
-            }
-        }
-        // same board access
-        for(var i=0;i<20;i+=10)
-        {
-            this.accessArray[0+i][6+i]=-1;
-            this.accessArray[1+i][7+i]=-1;
-            this.accessArray[2+i][8+i]=-1;
-            this.accessArray[3+i][7+i]=-1;
-            this.accessArray[3+i][8+i]=-1;
-            this.accessArray[4+i][6+i]=-1;
-            this.accessArray[4+i][7+i]=-1;
-            this.accessArray[5+i][6+i]=-1;
-            this.accessArray[5+i][8+i]=-1;
-            this.accessArray[6+i][9+i]=-1;// center tomb move to tail area
-            this.accessArray[6+i][7+i]=4+i;
-            this.accessArray[6+i][8+i]=5+i;
-            this.accessArray[7+i][8+i]=3+i;
-        }
-        //access between boards
-        this.accessArray[3][13]=-1;
-        this.accessArray[7][18]=-1;
-        this.accessArray[8][17]=-1;
-    };
-
-
-
-
-
-
-
-
-
-};
-
-BasicGame.Game.prototype =
-{
-
-
 
 
     access:function(x,y)
@@ -276,7 +225,7 @@ BasicGame.Game.prototype =
         if(this.score[0]>=3 || this.score[1]>=3)
         {
             if(this.score[0]==this.score[1])
-                return this.player.o();
+                return this.playero();
             else if(this.score[0]>this.score[1])
                 return 0;
             else if(this.score[0]<this.score[1])
@@ -410,7 +359,6 @@ BasicGame.Game.prototype =
         return true;
     },
 
-
     moveIn:function(chessid,areaid,contid)
     {
 
@@ -420,7 +368,7 @@ BasicGame.Game.prototype =
         this.MP[areaid].cont[contid].chessid=chessid;
         // step in a foe core?
         if(this.chess[chessid].own!=this.MP[areaid].own && (areaid===3 || areaid===13))
-            boardChange(chessid,areaid);
+            this.boardChange(chessid,areaid);
     },
 
     moveOut:function(chessid)
@@ -432,11 +380,11 @@ BasicGame.Game.prototype =
         {
             case 3:
                 if(this.MP[13].cont[1].chessid!=-1 && this.chess[this.MP[13].cont[1].chessid].own===this.chess[chessid].own &&this.MP[13].own!=this.chess[chessid].own)
-                    boardChange(this.MP[13].cont[1].chessid,13);
+                    this.boardChange(this.MP[13].cont[1].chessid,13);
                 return true;
             case 13:
                 if(this.MP[3].cont[1].chessid!=-1 && this.chess[this.MP[3].cont[1].chessid].own===this.chess[chessid].own &&this.MP[3].own!=this.chess[chessid].own)
-                    boardChange(this.MP[3].cont[1].chessid,3);
+                    this.boardChange(this.MP[3].cont[1].chessid,3);
                 return true;
             default:
                 return false;
@@ -456,8 +404,8 @@ BasicGame.Game.prototype =
                     contid=i;
                     break;
                 }
-            moveOut(chessid);
-            moveIn(chessid,tombid,contid);
+            this.moveOut(chessid);
+            this.moveIn(chessid,tombid,contid);
             this.chess[chessid].health=0;
             // chess[chessid].inputEnabled=false;
             return true;
@@ -476,10 +424,10 @@ BasicGame.Game.prototype =
                 switch(this.chess[i].belong)
                 {
                     case 9:
-                        move(i,6);
+                        this.move(i,6);
                         break;
                     case 19:
-                        move(i,16);
+                        this.move(i,16);
                         break;
 
                 }
@@ -512,8 +460,8 @@ BasicGame.Game.prototype =
                     // MP[areaid].cont[ii].chessid=MP[areaid].cont[ii+1].chessid;
                     // MP[areaid].cont[ii+1].chessid=tempchessid;
                     tempchessid=this.MP[areaid].cont[ii+1].chessid;
-                    moveOut(tempchessid);
-                    moveIn(tempchessid,areaid,ii);
+                    this.moveOut(tempchessid);
+                    this.moveIn(tempchessid,areaid,ii);
                 }
             }
     },
@@ -522,7 +470,7 @@ BasicGame.Game.prototype =
     {
         for(var i=0;i<20;i++)
             if(this.MP[i].typ===0 || this.MP[i].typ===-1)
-                contSort(i);
+                this.contSort(i);
     },
 
     move:function(chessid,areaid)
@@ -550,7 +498,7 @@ BasicGame.Game.prototype =
             return false;
 
         //can it move into the target? check access array
-        var mid= access(this.chess[chessid].belong,areaid);
+        var mid= this.access(this.chess[chessid].belong,areaid);
         // test.a=mid;
         // test.b=chess[chessid].belong;
         // test.c=areaid;
@@ -574,10 +522,10 @@ BasicGame.Game.prototype =
 
         // two condition cannot move caused by oppo domain level
         // in a battle area, level >=2 and it's not the same own, then cannot move out
-        if(this.MP[this.chess[chessid].belong].typ===0 && this.MP[this.chess[chessid].belong].own!=this.chess[chessid].own && areaLevel(this.chess[chessid].belong)>=2)
+        if(this.MP[this.chess[chessid].belong].typ===0 && this.MP[this.chess[chessid].belong].own!=this.chess[chessid].own && this.areaLevel(this.chess[chessid].belong)>=2)
                 return false;
         // to a battle area, level >=3 and it's not the same own, then cannot move in
-        if(this.MP[areaid].typ===0 && this.MP[areaid].own!=this.chess[chessid].own && areaLevel(areaid)>=3)
+        if(this.MP[areaid].typ===0 && this.MP[areaid].own!=this.chess[chessid].own && this.areaLevel(areaid)>=3)
                 return false;
 
 
@@ -600,7 +548,7 @@ BasicGame.Game.prototype =
                 else
                 {
                     // this is our full area, cannot step in more chess.
-                    if(this.MP[areaid].own===this.chess[chessid].own && areaLevel(areaid)===4)
+                    if(this.MP[areaid].own===this.chess[chessid].own && this.areaLevel(areaid)===4)
                         return false;
                     else
                     {
@@ -618,7 +566,7 @@ BasicGame.Game.prototype =
                                 contid=i;
                                 break;
                             }
-                        goTomb(this.MP[areaid].cont[contid].chessid);
+                        this.goTomb(this.MP[areaid].cont[contid].chessid);
                     }
 
 
@@ -631,7 +579,7 @@ BasicGame.Game.prototype =
                 {
                     // if it's a foe small chess and you are using a big chess, kill it!!
                     if(this.chess[this.MP[areaid].cont[1].chessid].own!= this.chess[chessid].own && this.chess[this.MP[areaid].cont[1].chessid].typ===0 && this.chess[chessid].typ===1)
-                        goTomb(this.MP[areaid].cont[1].chessid);
+                        this.goTomb(this.MP[areaid].cont[1].chessid);
                     else // else condition cannot move in and replace.
                         return false;
 
@@ -652,10 +600,10 @@ BasicGame.Game.prototype =
 
 
 
-        moveOut(chessid);
-        moveIn(chessid,areaid,contid);
-        battleChange();// not include change tomb sigh, tomb sigh is included in boardChange();
-        areaSort();
+        this.moveOut(chessid);
+        this.moveIn(chessid,areaid,contid);
+        this.battleChange();// not include change tomb sigh, tomb sigh is included in this.boardChange();
+        this.areaSort();
 
         return true;
     },
@@ -696,13 +644,14 @@ BasicGame.Game.prototype =
         // which player is playing?
 
             this.MP[this.player.p*10+9].cont[5].body.angularVelocity=50+0.5*this.physics.arcade.distanceToPointer(this.MP[this.player.p+9]);
-            this.MP[this.player.o()*10+9].cont[5].body.angularVelocity=10;
+            this.MP[this.playero()*10+9].cont[5].body.angularVelocity=10;
         // }
     },
 
     clickEvent:function()
     {
-        this.testinfo='clicked';
+        testinfo='clicked';
+        // this.clickStat=0;
         switch(this.clickStat)
         {
         case 0:
@@ -714,7 +663,7 @@ BasicGame.Game.prototype =
             {
                 //pixelPerfectClick cost too much? then open it when it neccessary
                 // chess[i].input.pixelPerfectClick=true;
-                if(this.chess[i].own===this.player.p && (this.chess[i].input.pointerDown(0) ||this.chess[i].input.pointerDown(1) ))
+                if(this.chess[i].own===this.player.p && (this.chess[i].input.pointerDown(this.input.mousePointer.id) ||this.chess[i].input.pointerDown(1) ))
                 {
                     this.selectedChess=i;
                     this.clickStat=1;
@@ -743,10 +692,10 @@ BasicGame.Game.prototype =
 
             }
             if (selectedDistance<50)// in the board.
-                if(move(selectedChess,selectedArea))
+                if(this.move(selectedChess,selectedArea))
                 {
-                    revive();
-                    this.player.change();  // switch players
+                    this.revive();
+                    this.playerchange();  // switch players
                 }
                 // testinfo+=selectedArea;
 
@@ -771,6 +720,11 @@ BasicGame.Game.prototype =
 
 
 
+
+
+
+
+
 	create: function ()
     {
 
@@ -779,41 +733,126 @@ BasicGame.Game.prototype =
         //  To make the sprite move we need to enable Arcade Physics
         this.physics.startSystem(Phaser.Physics.ARCADE);
 
-        this.board_up = this.add.sprite(CP.x,CP.y-DiBoard, 'board');
+        this.music = this.add.audio('gameMusic');
+        this.music.play();
+        ///////////////////////////Globe init//////////////////////////////////////////////
+        this.gameWidth=640;
+        this.gameHeight=1136;
+        // this.stage.backgroundColor=0xFFFFFF;
+        this.testinfo='start';
+        this.test=new Object();
+            this.test.a=0;
+            this.test.b=0;
+            this.test.c=0;
+        this.initFinished =false;
+        this.clickStat =0;
+        this.score=new Array();
+            this.score[0]=0;
+            this.score[1]=0;
+        this.winInfo;
+        this.gameNotOver=true;
+        this.tween;
+        this.scoreA;
+        this.scoreAb;
+        this.scoreZ;
+        this.scoreZb;
+        this.player = new Object();
+            this.player.p=0;// playing
+            this.player.r=0;// played rounds
+
+        this.selectedChess=-1;
+        this.selectedArea=-1;
+
+        this.chess = new Array();
+
+        this.CP = new Object();//center postion caculated from
+
+            this.CP.x = this.gameWidth/2;
+            this.CP.y = this.gameHeight/2;
+
+        this.DiBoard = 263;//diameter of  board
+        this.DiBattle =90;//diameter of battle area
+        this.DiTomb =60;
+        this.MP = new Array();//Map Point Position
+
+
+        this.accessArray = new Array();
+        {
+            for(var i=0;i<20;i++)
+            {
+                this.accessArray[i]=new Array();
+                for(var ii=i;ii<20;ii++)
+                {
+                    // this.accessArray[i][ii]=new Object();
+                    // this.accessArray[i][ii].typ=0;// typ 0 cannot access, 1 can access directly, 2 access through big area;
+                    // this.accessArray[i][ii].mid=-1;// mid area for access through
+                    this.accessArray[i][ii]=-2;//-2 cannot access. -1 access directly. else is the area# access through.
+                }
+            }
+            // same board access
+            for(var i=0;i<20;i+=10)
+            {
+                this.accessArray[0+i][6+i]=-1;
+                this.accessArray[1+i][7+i]=-1;
+                this.accessArray[2+i][8+i]=-1;
+                this.accessArray[3+i][7+i]=-1;
+                this.accessArray[3+i][8+i]=-1;
+                this.accessArray[4+i][6+i]=-1;
+                this.accessArray[4+i][7+i]=-1;
+                this.accessArray[5+i][6+i]=-1;
+                this.accessArray[5+i][8+i]=-1;
+                this.accessArray[6+i][9+i]=-1;// center tomb move to tail area
+                this.accessArray[6+i][7+i]=4+i;
+                this.accessArray[6+i][8+i]=5+i;
+                this.accessArray[7+i][8+i]=3+i;
+            }
+            //access between boards
+            this.accessArray[3][13]=-1;
+            this.accessArray[7][18]=-1;
+            this.accessArray[8][17]=-1;
+        };
+
+        ////////////////////////////////////////////////////////////////////////
+
+        this.board_up = this.add.sprite(this.CP.x,this.CP.y-this.DiBoard, 'board');
         this.board_up.anchor.setTo(0.5, 0.5);
-        this.board_down = this.add.sprite(CP.x,CP.y+DiBoard, 'board');
+        this.board_down = this.add.sprite(this.CP.x,this.CP.y+this.DiBoard, 'board');
         this.board_down.anchor.setTo(0.5, 0.5);
         this.board_down.angle=180;
-        this.winInfo=this.add.sprite(CP.x,CP.y,'winInfo');
+        this.winInfo=this.add.sprite(this.CP.x,this.CP.y,'winInfo');
         this.winInfo.animations.add("null",[0],1,false);
         this.winInfo.animations.add("order",[3,4,5,4,3],2,true);
         this.winInfo.animations.add("chaos",[6,7,8,7,6],2,true);
         this.winInfo.animations.play("null");
         this.winInfo.anchor.set(0.5);
         this.winInfo.scale.set(0);
-        this.scoreA = this.add.sprite(CP.x+200,CP.y+400, 's0');
+        this.scoreA = this.add.sprite(this.CP.x+200,this.CP.y+400, 's0');
         this.scoreA.anchor.set(0.5);
-        this.scoreAb= this.add.sprite(CP.x+200,CP.y+400, 'order');
+        this.scoreAb= this.add.sprite(this.CP.x+200,this.CP.y+400, 'order');
         this.scoreAb.anchor.set(0.5,2/3);
         this.scoreAb.scale.set(0.6);
         this.physics.arcade.enable(this.scoreAb);
         this.scoreAb.body.allowRotation=true;
         this.scoreAb.body.angularVelocity=10;
-        this.scoreZ = this.add.sprite(CP.x-200,CP.y-400, 's0');
+        this.scoreZ = this.add.sprite(this.CP.x-200,this.CP.y-400, 's0');
         this.scoreZ.anchor.set(0.5);
-        this.scoreZb= this.add.sprite(CP.x-200,CP.y-400, 'chaos');
+        this.scoreZb= this.add.sprite(this.CP.x-200,this.CP.y-400, 'chaos');
         this.scoreZb.anchor.set(0.5,2/3);
         this.scoreZb.scale.set(0.6);
         this.physics.arcade.enable(this.scoreZb);
         this.scoreZb.body.allowRotation=true;
         this.scoreZb.body.angularVelocity=-10;
+
+        this.initMap();
+
+        //////////////init chess
         for (var i = 0; i <12; i++)
         {
-            this.chess[i] = new this.Chess.createNew(i);
+            this.chess[i] = this.createNewChess(i);
             var mi=i;//map area id
             if (i>=6)// chaos chessid
                 mi=i+4;//chaos area begin from 10;
-            moveIn(i,mi,1);
+            this.moveIn(i,mi,1);
         }
         //battle area sign.
         for(var i=0; i<20;i++)
@@ -829,13 +868,14 @@ BasicGame.Game.prototype =
                 // this.MP[i].cont[5].body.angularVelocity = this.MP[i].own===0? 10:10;// rotation clockwise
             }
         }
-        battleChange();
-        boardChange(3,3);
-        scoreCheck();
+        this.battleChange();
+        this.boardChange(3,3);
+        this.scoreCheck();
 
         this.initFinished=true;
-        this.input.onTap.add(clickEvent);
+        this.input.onTap.add(this.clickEvent);
 
+        // this.test=this.add.text(100,100,this.MP[2].x+"  "+this.MP[2].y,0x000000);
 
 
         // move(0,19,3);
@@ -852,12 +892,14 @@ BasicGame.Game.prototype =
     {
 
 		//	Honestly, just about anything could go here. It's YOUR game after all. Eat your heart out!
+
+
         if(this.initFinished)
         {   // score check;
             // scoreCheck();
 
             //control control
-            // I don't know why if i put this in the player.change or similar function it will make the input confuse.
+            // I don't know why if i put this in the playerchange or similar function it will make the input confuse.
             for(var i=0;this.gameNotOver&&i<12;i++)
             {
                 if((this.chess[i].belong===9)||(this.chess[i].belong===19))
@@ -865,7 +907,7 @@ BasicGame.Game.prototype =
                 else
                     this.chess[i].inputEnabled=true;
             }
-            moveAnimation();
+            this.moveAnimation();
         }
         //game over and bring the this.wininfo to the front
         if(!this.gameNotOver)
@@ -879,6 +921,7 @@ BasicGame.Game.prototype =
 
     render: function()
     {
+        this.test.text=this.clickStat;//this.testinfo;
         if(this.scoreA.frameName!=('images/'+this.score[0]+'.png'))
         {
             this.scoreA.loadTexture('s'+this.score[0]);
@@ -902,7 +945,7 @@ BasicGame.Game.prototype =
 
 		//	Here you should destroy anything you no longer need.
 		//	Stop music, delete sprites, purge caches, free resources, all that good stuff.
-
+        this.music.stop();
 		//	Then let's go back to the main menu.
 		this.state.start('MainMenu');
 

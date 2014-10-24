@@ -18,13 +18,13 @@ BasicGame.Boot.prototype = {
 
     init: function () {
 
-        this.input.maxPointers = 1;
+        this.input.maxPointers = 2;
         this.stage.disableVisibilityChange = true;
 
         if (this.game.device.desktop)
         {
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            this.scale.setMinMax(568,320,2272,1280);
+            this.scale.setMinMax(320, 568, 1280,2272);
             this.scale.pageAlignHorizontally = true;
             this.scale.pageAlignVertically = true;
             this.scale.setScreenSize(true);
@@ -50,7 +50,7 @@ BasicGame.Boot.prototype = {
 
         //  Here we load the assets required for our preloader (in this case a background and a loading bar)
         this.load.image('preloaderBackground', 'images/Backgroud.png');
-        this.load.image('preloaderBar', 'images/Title.png');
+        this.load.image('preloaderBar', 'images/Hunter.png');
 
     },
 

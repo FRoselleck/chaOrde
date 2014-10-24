@@ -14,8 +14,10 @@ BasicGame.Preloader.prototype = {
 
 		//	These are the assets we loaded in Boot.js
 		//	A nice sparkly background and a loading progress bar
-		this.background = this.add.sprite(0, 0, 'preloaderBackground');
-		this.preloadBar = this.add.sprite(300, 400, 'preloaderBar');
+		// this.background = this.add.sprite(0, 0, 'preloaderBackground');
+		this.preloadBar = this.add.sprite(320, 568, 'preloaderBar');
+		this.preloadBar.anchor.set(0.5,0.5);
+    	this.stage.backgroundColor=0xFFFFFF;
 
 		//	This sets the preloadBar sprite as a loader sprite.
 		//	What that does is automatically crop the sprite from 0 to full-width
@@ -28,14 +30,19 @@ BasicGame.Preloader.prototype = {
 		this.load.image('playButton', 'images/Play.png');
 		// this.load.atlas('playButton', 'images/play_button.png', 'images/play_button.json');
 		this.load.audio('titleMusic', ['audio/outgamemusic.mp3']);
+		this.load.audio('gameMusic', ['audio/gamemusic.mp3']);
 		// this.load.bitmapFont('caslon', 'fonts/caslon.png', 'fonts/caslon.xml');
 		//	+ lots of other required assets here
-		
+
 		this.load.image('board', 'images/board.png');
+		this.load.image('board_B', 'images/board_B.png');
 		this.load.image('ZL', 'images/ZL.png');
 		this.load.image('AL', 'images/AL.png');
+		this.load.image('AZL', 'images/AZL.png');
 		this.load.image('ZS', 'images/ZS.png');
 		this.load.image('AS', 'images/AS.png');
+		this.load.image('ZX', 'images/ZX.png');
+		this.load.image('AX', 'images/AX.png');
 		this.load.image('balance', 'images/balance.png');
 		this.load.image('order', 'images/order.png');
 		this.load.image('chaos', 'images/chaos.png');
