@@ -29,8 +29,8 @@ BasicGame.Preloader.prototype = {
 		this.load.image('titlepage', 'images/Title.png');
 		this.load.image('playButton', 'images/Play.png');
 		// this.load.atlas('playButton', 'images/play_button.png', 'images/play_button.json');
-		this.load.audio('titleMusic', ['audio/outgamemusic.mp3']);
-		this.load.audio('gameMusic', ['audio/gamemusic.mp3']);
+		// this.load.audio('titleMusic', ['audio/outgamemusic.mp3']);
+		// this.load.audio('gameMusic', ['audio/gamemusic.mp3']);
 		// this.load.bitmapFont('caslon', 'fonts/caslon.png', 'fonts/caslon.xml');
 		//	+ lots of other required assets here
 
@@ -75,7 +75,7 @@ BasicGame.Preloader.prototype = {
 		//	If you don't have any music in your game then put the game.state.start line into the create function and delete
 		//	the update function completely.
 		
-		if (this.cache.isSoundDecoded('titleMusic') && this.ready == false)
+		if ( this.ready == false)
 		{
 			this.ready = true;
 			this.state.start('Game');

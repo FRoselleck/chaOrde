@@ -735,8 +735,8 @@ BasicGame.Game.prototype =
         //  To make the sprite move we need to enable Arcade Physics
         this.physics.startSystem(Phaser.Physics.ARCADE);
 
-        this.music = this.add.audio('gameMusic');
-        this.music.play();
+        // this.music = this.add.audio('gameMusic');
+        // this.music.play();
         ///////////////////////////Globe init//////////////////////////////////////////////
         this.gameWidth=640;
         this.gameHeight=1136;
@@ -959,7 +959,7 @@ BasicGame.Game.prototype =
 
 		//	Here you should destroy anything you no longer need.
 		//	Stop music, delete sprites, purge caches, free resources, all that good stuff.
-        this.music.stop();
+        // this.music.stop();
 		//	Then let's go back to the main menu.
 		this.state.start('MainMenu');
 
