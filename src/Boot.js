@@ -24,7 +24,7 @@ BasicGame.Boot.prototype = {
         if (this.game.device.desktop)
         {
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            this.scale.setMinMax(270, 480, 1600,2560);
+            this.scale.setMinMax(320, 568, 1280,2272);
             this.scale.pageAlignHorizontally = true;
             this.scale.pageAlignVertically = true;
             this.scale.setScreenSize(true);
@@ -33,7 +33,7 @@ BasicGame.Boot.prototype = {
         else
         {
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            this.scale.setMinMax(270, 480, 1080,1920);
+            this.scale.setMinMax(320, 568, 1280,2272);
             this.scale.pageAlignHorizontally = true;
             this.scale.pageAlignVertically = true;
             this.scale.forceOrientation(false, true);
